@@ -1,0 +1,53 @@
+Sure, here's the given DataFrame arranged in columns and rows for better readability:
+
+| Constituency Name                        | 2022    | 2021    | 2020    | 2019    | 2018    | 2017    | 2016    |
+|------------------------------------------|---------|---------|---------|---------|---------|---------|---------|
+| Grand River North West and Port Louis West | 42,950  | 42,041  | 42,399  | 41,536  | 40,543  | 40,059  | 40,578  |
+| Port Louis South and Port Louis Central   | 24,287  | 24,115  | 24,359  | 24,238  | 23,959  | 23,759  | 24,293  |
+| Port Louis Maritime and Port Louis East   | 21,772  | 21,881  | 22,053  | 21,943  | 21,530  | 21,383  | 21,763  |
+| Port Louis North and Montagne Longue      | 50,977  | 49,702  | 50,097  | 48,918  | 48,061  | 47,672  | 48,664  |
+| Pamplemousses and Triolet                 | 68,671  | 66,546  | 66,942  | 65,115  | 63,527  | 62,388  | 62,260  |
+| Grand Baie and Poudre D'Or                | 56,996  | 55,430  | 55,729  | 53,949  | 52,847  | 51,752  | 51,430  |
+| Piton and Riviere du Rempart              | 45,495  | 44,321  | 44,664  | 43,993  | 43,270  | 42,781  | 42,678  |
+| Quartier Militaire and Moka               | 47,819  | 45,992  | 46,287  | 45,268  | 44,345  | 43,927  | 43,811  |
+| Flacq and Bon Accueil                     | 58,573  | 57,314  | 57,712  | 56,788  | 55,602  | 54,973  | 54,688  |
+| Montagne Blanche and Grand River South East| 54,868  | 53,688  | 53,989  | 52,835  | 51,742  | 50,959  | 50,483  |
+| Vieux Grand Port and Rose Belle           | 45,134  | 44,105  | 44,430  | 43,824  | 43,046  | 42,549  | 42,337  |
+| Mahebourg and Plaine Magnien              | 40,474  | 39,826  | 40,485  | 39,274  | 38,497  | 38,053  | 37,931  |
+| Riviere des Anguilles and Souillac        | 36,307  | 35,563  | 35,833  | 35,297  | 34,751  | 34,844  | 34,854  |
+| Savanne and Black River                   | 66,484  | 64,820  | 65,239  | 63,500  | 62,183  | 61,988  | 61,801  |
+| La Caverne and Phoenix                    | 59,519  | 58,211  | 58,617  | 57,256  | 56,032  | 55,919  | 56,130  |
+| Vacoas and Floreal                        | 46,368  | 45,555  | 45,856  | 44,966  | 44,066  | 44,232  | 44,700  |
+| Curepipe and Midlands                     | 47,032  | 46,558  | 46,949  | 46,260  | 45,515  | 45,314  | 45,897  |
+| Belle Rose and Quatre Bornes              | 44,258  | 43,661  | 44,006  | 43,423  | 42,762  | 42,052  | 42,930  |
+| Stanley and Rose Hill                     | 39,281  | 38,581  | 38,885  | 38,433  | 37,836  | 37,489  | 38,286  |
+| Beau Bassin and Petitie Riviere           | 46,899  | 45,467  | 45,816  | 44,504  | 43,404  | 42,698  | 43,000  |
+| Rodrigues                                | 31,868  | 31,459  | 30,715  | 30,399  | 29,798  | 28,504  | 28,797  |
+
+Each row represents a constituency, and the columns represent the years along with the corresponding data for that year and constituency.
+
+import pandas as pd
+
+# Sample data (replace this with your actual data)
+data = {
+    "Constituency Name": ["Grand River North West and Port Louis West", "Port Louis South and Port Louis Central", ...],  # Your constituency names
+    "2022": [42950, 24287, ...],  # Your data for each year
+    "2021": [42041, 24115, ...],
+    "2020": [42399, 24359, ...],
+    "2019": [41536, 24238, ...],
+    "2018": [40543, 23959, ...],
+    "2017": [40059, 23759, ...],
+    "2016": [40578, 24293, ...]
+}
+
+# Create the original DataFrame
+df = pd.DataFrame(data)
+
+# Extract unique years
+unique_years = df.columns[1:]  # Assuming the years start from the second column
+
+# Create a new DataFrame for years
+years_df = pd.DataFrame({"Year": unique_years})
+
+# Print the new DataFrame for years
+print(years_df)
