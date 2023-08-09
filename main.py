@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # Read the dataset from the local folder into a DataFrame
-file_path = "data/by_constituency_2016_2022.csv"
+file_path = "datasets/by_constituency_2016_2022.csv"
 df = pd.read_csv(file_path)
 
 # Extract the unique years from the DataFrame
