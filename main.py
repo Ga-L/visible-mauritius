@@ -6,7 +6,7 @@ import plotly.express as px
 from streamlit import components 
 
 
-# Set favicon
+#Set favicon
 favicon_path = "fav_icon.png"
 
 st.set_page_config(
@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # Read the dataset from the local folder into a DataFrame
-file_path = "C:/Users/LENOVO/PycharmProjects/data_mu/datasets/by_constituency_2016_2022.csv"
+file_path = "data/by_constituency_2016_2022.csv"
 df = pd.read_csv(file_path)
 
 # Extract the unique years from the DataFrame
