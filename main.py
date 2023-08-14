@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import os
 from streamlit import components 
-import seaborn as sns
 
 # Specify the folder where the datasets are located
 #folder_path = "datasets"
