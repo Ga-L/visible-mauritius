@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import os
 from streamlit import components 
+import seaborn as sns
 
 # Specify the folder where the datasets are located
 #folder_path = "datasets"
@@ -33,6 +34,8 @@ from streamlit import components
 #merged_data.to_csv(merged_output_file, index=False)
 
 #print("Merged dataset created and saved as", merged_output_file)
+
+# Set favicon
 
 # Set favicon
 favicon_path = "fav_icon.png"
@@ -108,10 +111,13 @@ if selected_year:
 
     # Filters for Comparative Analysis in the second column
     with col2:
-        st.sidebar.header("Constituency Filters")
+        st.sidebar.header("Difference in Registered Voters by constituency")
         # Select only 2 Constituencies for Comparison
         selected_constituencies = st.sidebar.multiselect("Select Constituencies (Max 2)", df["Constituency Name"], default=None, max_selections=2)
-        
+    
+         # Add a separator line
+        st.sidebar.markdown("---")  # Inserts a horizontal rule
+    
         # Display Plus/Minus Analysis and Bar Chart
         if len(selected_constituencies) == 2:
             constituency_a = selected_constituencies[0]
@@ -119,21 +125,18 @@ if selected_year:
             
             voters_a = df[df["Constituency Name"] == constituency_a][selected_year].values[0]
             voters_b = df[df["Constituency Name"] == constituency_b][selected_year].values[0]
-            
-            voters_diff = voters_b - voters_a
-            
-            st.write(f"Difference in Registered Voters between {constituency_a} and {constituency_b}: {voters_diff}")
+            difference = voters_a - voters_b  # Calculate the difference
             
             # Create Bar Chart using Plotly
             fig = px.bar(df, x=[constituency_a, constituency_b], y=[voters_a, voters_b], labels={'x': 'Constituencies', 'y': 'Registered Voters'},
-                         title='Registered Voters Comparison', color_discrete_sequence=['#FFFFFF', '#FFFFFF'])
+                         title=f'Registered Voters Comparison\nDifference: {difference}', color_discrete_sequence=['#FFFFFF', '#FFFFFF'])
             fig.update_traces(texttemplate='%{y}', textposition='outside')  # Display values on bars
             fig.update_layout(
                 plot_bgcolor='#0E1117',  # Transparent background
                 paper_bgcolor='#0E1117',  # Transparent background of the plot area
                 font_color='#FFFFFF',  # Font color
                 width=500,  # Width of the bar chart
-                height=400,  # Height of the bar chart
+                height=500,  # Height of the bar chart
                 margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
             )
             st.plotly_chart(fig)
@@ -141,8 +144,17 @@ if selected_year:
 # Select a Constituency for Evolution Analysis
 selected_constituency_evolution = st.selectbox("Select a Constituency for Evolution Analysis", df["Constituency Name"], key="constituency_evolution_picker")
 
+# Add a checkbox for toggling the comparative feature
+toggle_comparative_checkbox = st.checkbox("Toggle Comparative Feature")
+
+# Create a placeholder for the new constituency picker
+new_constituency_picker_placeholder = st.empty()
+
 # Create a placeholder for the highlights
 highlights_placeholder = st.empty()
+
+# Create a placeholder for the evolution of registered voters graph
+evolution_graph_placeholder = st.empty()
 
 # Display the evolution of registered voters for the selected constituency
 if selected_constituency_evolution:
@@ -155,30 +167,54 @@ if selected_constituency_evolution:
     # Create a line chart using Plotly Express
     fig_evolution = px.line(x=years, y=registered_voters, labels={'x': 'Year', 'y': 'Registered Voters'},
                             title=f"Evolution of Registered Voters for {selected_constituency_evolution}",
-                            line_shape="linear")
+                            line_shape="linear",
+                            color_discrete_sequence=["#4CAF50"])  # Specify a color for the main line
     fig_evolution.update_layout(
         plot_bgcolor='#0E1117',  # Transparent background
         paper_bgcolor='#0E1117',  # Transparent background of the plot area
         font_color='#FFFFFF',  # Font color
         width=700,  # Width of the line chart
         height=400,  # Height of the line chart
-        margin=dict(l=50, r=50, t=50, b=0)  # Margins
+        margin=dict(l=50, r=50, t=50, b=0),  # Margins
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
     )
-    st.plotly_chart(fig_evolution)
     
-    # Calculate the highlights (highest year, lowest year, and average value)
-    highest_year = years[registered_voters.argmax()]
-    lowest_year = years[registered_voters.argmin()]
-    avg_registered_voters = registered_voters.mean()
+    # Set the legend label for the main line
+    fig_evolution.data[0].name = selected_constituency_evolution
+    
+    evolution_graph_placeholder.plotly_chart(fig_evolution)
+    
+    # Check if the comparative feature checkbox is checked
+    if toggle_comparative_checkbox:
+        # Hide the highlights placeholder
+        highlights_placeholder.empty()
+        
+        # Display a new constituency picker for comparative analysis
+        new_constituency = new_constituency_picker_placeholder.selectbox("Select a Constituency for Comparative Analysis", df["Constituency Name"], key="new_constituency_picker")
+        
+        # Display Comparative Analysis line for the selected constituency
+        if new_constituency:
+            voters_new = df[df["Constituency Name"] == new_constituency][years].values[0]
+            
+            # Add the comparative line to the chart
+            fig_evolution.add_scatter(x=years, y=voters_new, mode="lines",
+                                      name=new_constituency,  # Set the name for the legend
+                                      line=dict(color="#2196F3"))  # Specify a different color for the comparative line
+            evolution_graph_placeholder.plotly_chart(fig_evolution)
+    else:
+        # Calculate the highlights (highest year, lowest year, and average value)
+        highest_year = years[registered_voters.argmax()]
+        lowest_year = years[registered_voters.argmin()]
+        avg_registered_voters = registered_voters.mean()
 
-    # Display the highlights next to each other
-    col1, col2, col3 = highlights_placeholder.columns(3)
-    with col1:
-        st.markdown(f"<p style='font-size: 16px; font-weight: bold;'>Highest Year:</p><p style='font-size: 20px;'>{highest_year}</p>", unsafe_allow_html=True)
-    with col2:
-        st.markdown(f"<p style='font-size: 16px; font-weight: bold;'>Lowest Year:</p><p style='font-size: 20px;'>{lowest_year}</p>", unsafe_allow_html=True)
-    with col3:
-        st.markdown(f"<p style='font-size: 16px; font-weight: bold;'>Average Value:</p><p style='font-size: 20px;'>{avg_registered_voters:.2f}</p>", unsafe_allow_html=True)
+        # Display the highlights next to each other
+        col1, col2, col3 = highlights_placeholder.columns(3)
+        with col1:
+            st.markdown(f"<p style='font-size: 16px; font-weight: bold;'>Highest Year:</p><p style='font-size: 20px;'>{highest_year}</p>", unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"<p style='font-size: 16px; font-weight: bold;'>Lowest Year:</p><p style='font-size: 20px;'>{lowest_year}</p>", unsafe_allow_html=True)
+        with col3:
+            st.markdown(f"<p style='font-size: 16px; font-weight: bold;'>Average Value:</p><p style='font-size: 20px;'>{avg_registered_voters:.2f}</p>", unsafe_allow_html=True)
 
 else:
     st.warning("Please select a year to view the table.")
