@@ -46,9 +46,38 @@ st.set_page_config(
     page_icon=favicon_path  # Set the favicon
 )
 
+# Apply custom CSS styles to the option menu container
+st.markdown(
+    """
+    <style>
+        .option-menu-container {
+            margin-top: 20px;  /* Add margin top - this does not work */
+            font-size: 14px;   /* Adjust font size */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
+# Horizontal menu
+selected = option_menu(
+    menu_title=None,
+    options=[ "Registered Voters", "General Elections", "Chat Bot"],
+    orientation="horizontal",
+)    
+
+
+
+if selected == "General Elections":
+    st.title("Soon Available")
+else:
     # Read the dataset from the local folder into a DataFrame
-file_path = "datasets/merged_datasets.csv"
+    file_path = "datasets/merged_datasets.csv"
+    df = pd.read_csv(file_path)
+        
+if selected =="Registered Voters":
+    # Read the dataset from the local folder into a DataFrame
+    file_path = "datasets/merged_datasets.csv"
 df = pd.read_csv(file_path)
 dataset_path = 'datasets/voters_electors_by_election.csv'
 df2 = pd.read_csv(dataset_path)
@@ -137,8 +166,8 @@ if selected_year:
                 plot_bgcolor='#0E1117',  # Transparent background
                 paper_bgcolor='#0E1117',  # Transparent background of the plot area
                 font_color='#FFFFFF',  # Font color
-                width=475,  # Width of the bar chart
-                height=525,  # Height of the bar chart
+                width=500,  # Width of the bar chart
+                height=500,  # Height of the bar chart
                 margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
             )
             st.plotly_chart(fig)
@@ -175,7 +204,7 @@ if selected_constituency_evolution:
         plot_bgcolor='#0E1117',  # Transparent background
         paper_bgcolor='#0E1117',  # Transparent background of the plot area
         font_color='#FFFFFF',  # Font color
-        width=800,  # Width of the line chart
+        width=700,  # Width of the line chart
         height=400,  # Height of the line chart
         margin=dict(l=50, r=50, t=50, b=0),  # Margins
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
@@ -186,49 +215,23 @@ if selected_constituency_evolution:
     
     evolution_graph_placeholder.plotly_chart(fig_evolution)
     
-     # Initialize variables for highest and lowest years
-    highest_year_selected = years[registered_voters.argmax()]
-    lowest_year_selected = years[registered_voters.argmin()]
-    
-      # Initialize avg_registered_voters outside the conditional block
-    avg_registered_voters = registered_voters.mean()
-
     # Check if the comparative feature checkbox is checked
     if toggle_comparative_checkbox:
         # Hide the highlights placeholder
         highlights_placeholder.empty()
-        # Create a placeholder for the table
-        table_placeholder = st.empty()
-
+        
         # Display a new constituency picker for comparative analysis
         new_constituency = new_constituency_picker_placeholder.selectbox("Select a Constituency for Comparative Analysis", df["Constituency Name"], key="new_constituency_picker")
-
-        # Create a dynamic title for comparative analysis
+        
+        # Display Comparative Analysis line for the selected constituency
         if new_constituency:
-            # Change the title based on the selected constituencies
-            comparative_title = f"Comparative {selected_constituency_evolution} & {new_constituency}"
-            fig_evolution.update_layout(title=comparative_title)  # Update the graph title
-
             voters_new = df[df["Constituency Name"] == new_constituency][years].values[0]
-
+            
             # Add the comparative line to the chart
             fig_evolution.add_scatter(x=years, y=voters_new, mode="lines",
                                       name=new_constituency,  # Set the name for the legend
                                       line=dict(color="#2196F3"))  # Specify a different color for the comparative line
             evolution_graph_placeholder.plotly_chart(fig_evolution)
-
-            # Calculate the average value for the selected constituency
-            avg_registered_voters_new = voters_new.mean()
-
-        # Display a table for the data of the selected constituencies
-            data_table = pd.DataFrame({
-            selected_constituency_evolution: [highest_year_selected, lowest_year_selected, round(avg_registered_voters)],
-            new_constituency: [years[voters_new.argmax()], years[voters_new.argmin()], round(avg_registered_voters_new)]
-        }, index=['Highest Year', 'Lowest Year', 'Average Value'])
-
-            # Display the table in the same column as the graph
-            with table_placeholder:
-                st.table(data_table)
     else:
         # Calculate the highlights (highest year, lowest year, and average value)
         highest_year = years[registered_voters.argmax()]

@@ -101,7 +101,7 @@ if selected_year:
         st.header(f"Registered Voters in {selected_year}")
         # Filter the DataFrame based on the selected year
         filtered_df = df[["Constituency Name", selected_year]]
-        st.dataframe(filtered_df, height=400)
+        st.dataframe(filtered_df, height=300)
         
         # Display data source link with CSS styling
     st.markdown(
@@ -137,8 +137,8 @@ if selected_year:
                 plot_bgcolor='#0E1117',  # Transparent background
                 paper_bgcolor='#0E1117',  # Transparent background of the plot area
                 font_color='#FFFFFF',  # Font color
-                width=475,  # Width of the bar chart
-                height=525,  # Height of the bar chart
+                width=500,  # Width of the bar chart
+                height=500,  # Height of the bar chart
                 margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
             )
             st.plotly_chart(fig)
@@ -175,7 +175,7 @@ if selected_constituency_evolution:
         plot_bgcolor='#0E1117',  # Transparent background
         paper_bgcolor='#0E1117',  # Transparent background of the plot area
         font_color='#FFFFFF',  # Font color
-        width=800,  # Width of the line chart
+        width=400,  # Width of the line chart
         height=400,  # Height of the line chart
         margin=dict(l=50, r=50, t=50, b=0),  # Margins
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
@@ -216,18 +216,29 @@ if selected_constituency_evolution:
                                       name=new_constituency,  # Set the name for the legend
                                       line=dict(color="#2196F3"))  # Specify a different color for the comparative line
             evolution_graph_placeholder.plotly_chart(fig_evolution)
+# Create a container for the graph and the table
+        container = st.container()
+        
+        # Display the graph and table in the same container
+        with container:
+            # Create two columns within the container
+            col1, col2 = st.columns(2)
+            
+            # Display the graph in the first column
+            with col1:
+                evolution_graph_placeholder.plotly_chart(fig_evolution)
 
             # Calculate the average value for the selected constituency
             avg_registered_voters_new = voters_new.mean()
 
-        # Display a table for the data of the selected constituencies
+            # Create a table for the data of the selected constituencies
             data_table = pd.DataFrame({
-            selected_constituency_evolution: [highest_year_selected, lowest_year_selected, round(avg_registered_voters)],
-            new_constituency: [years[voters_new.argmax()], years[voters_new.argmin()], round(avg_registered_voters_new)]
-        }, index=['Highest Year', 'Lowest Year', 'Average Value'])
+                selected_constituency_evolution: [highest_year_selected, lowest_year_selected, avg_registered_voters],
+                new_constituency: [years[voters_new.argmax()], years[voters_new.argmin()], avg_registered_voters_new]
+            }, index=['Highest Year', 'Lowest Year', 'Average Value'])
 
-            # Display the table in the same column as the graph
-            with table_placeholder:
+            # Display the table in the second column
+            with col2:
                 st.table(data_table)
     else:
         # Calculate the highlights (highest year, lowest year, and average value)
