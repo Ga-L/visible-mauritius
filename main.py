@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import os
 from streamlit import components 
-from streamlit_option_menu import option_menu
 
 
 # Specify the folder where the datasets are located
