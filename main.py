@@ -49,9 +49,8 @@ st.set_page_config(
     # Read the dataset from the local folder into a DataFrame
 file_path = "datasets/merged_datasets.csv"
 df = pd.read_csv(file_path)
-dataset_path = 'datasets/voters_electors_by_election.csv'
-df2 = pd.read_csv(dataset_path)
-    # Extract the unique years from the DataFrame
+
+# Extract the unique years from the DataFrame
 unique_years = df.columns[1:]
 
 # Title and CSS styling
