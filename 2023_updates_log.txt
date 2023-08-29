@@ -3,3 +3,8 @@ Updates 14.08.2023:
 2.Evolution analysis by constituency overtime with a added constituency picker. 
 3. Highlight of the Highest year, lowest year and average value (avg. number of registered voters by a constituency over time)
 
+
+Updates 20.08.2023:
+1.New dataset of voters, electors and valid votes added.
+2.Filters added for more detailed analysis. 
+3.Barchart visualisation added to filtered data by user. 

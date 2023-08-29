@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import os
 from streamlit import components 
-from streamlit_option_menu import option_menu
 
 
 # Specify the folder where the datasets are located
@@ -101,7 +100,7 @@ if selected_year:
         st.header(f"Registered Voters in {selected_year}")
         # Filter the DataFrame based on the selected year
         filtered_df = df[["Constituency Name", selected_year]]
-        st.dataframe(filtered_df, height=300)
+        st.dataframe(filtered_df, height=400)
         
         # Display data source link with CSS styling
     st.markdown(
@@ -137,8 +136,8 @@ if selected_year:
                 plot_bgcolor='#0E1117',  # Transparent background
                 paper_bgcolor='#0E1117',  # Transparent background of the plot area
                 font_color='#FFFFFF',  # Font color
-                width=500,  # Width of the bar chart
-                height=500,  # Height of the bar chart
+                width=475,  # Width of the bar chart
+                height=525,  # Height of the bar chart
                 margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
             )
             st.plotly_chart(fig)
@@ -175,7 +174,7 @@ if selected_constituency_evolution:
         plot_bgcolor='#0E1117',  # Transparent background
         paper_bgcolor='#0E1117',  # Transparent background of the plot area
         font_color='#FFFFFF',  # Font color
-        width=400,  # Width of the line chart
+        width=800,  # Width of the line chart
         height=400,  # Height of the line chart
         margin=dict(l=50, r=50, t=50, b=0),  # Margins
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
@@ -216,29 +215,18 @@ if selected_constituency_evolution:
                                       name=new_constituency,  # Set the name for the legend
                                       line=dict(color="#2196F3"))  # Specify a different color for the comparative line
             evolution_graph_placeholder.plotly_chart(fig_evolution)
-# Create a container for the graph and the table
-        container = st.container()
-        
-        # Display the graph and table in the same container
-        with container:
-            # Create two columns within the container
-            col1, col2 = st.columns(2)
-            
-            # Display the graph in the first column
-            with col1:
-                evolution_graph_placeholder.plotly_chart(fig_evolution)
 
             # Calculate the average value for the selected constituency
             avg_registered_voters_new = voters_new.mean()
 
-            # Create a table for the data of the selected constituencies
+        # Display a table for the data of the selected constituencies
             data_table = pd.DataFrame({
-                selected_constituency_evolution: [highest_year_selected, lowest_year_selected, avg_registered_voters],
-                new_constituency: [years[voters_new.argmax()], years[voters_new.argmin()], avg_registered_voters_new]
-            }, index=['Highest Year', 'Lowest Year', 'Average Value'])
+            selected_constituency_evolution: [highest_year_selected, lowest_year_selected, round(avg_registered_voters)],
+            new_constituency: [years[voters_new.argmax()], years[voters_new.argmin()], round(avg_registered_voters_new)]
+        }, index=['Highest Year', 'Lowest Year', 'Average Value'])
 
-            # Display the table in the second column
-            with col2:
+            # Display the table in the same column as the graph
+            with table_placeholder:
                 st.table(data_table)
     else:
         # Calculate the highlights (highest year, lowest year, and average value)
@@ -257,6 +245,60 @@ if selected_constituency_evolution:
 
 else:
     st.warning("Please select a year to view the table.")
+    
+# Load the Excel file for voters vs turnouts
+# Load the Excel file for voters vs turnouts
+@st.cache_resource  # Cache the loaded data for improved performance
+def load_data(file_path):
+    xls = pd.ExcelFile(file_path)
+    data = {}
+    for sheet_name in xls.sheet_names:
+        data[sheet_name] = pd.read_excel(file_path, sheet_name=sheet_name)
+    return data
+
+# Main function
+def main():
+    # Adding a subtitle using markdown
+    st.markdown("### Voters, Turnout, and Valid Votes Breakdown")
+
+    # Load data from the Excel file
+    file_path = "datasets/voters_electors_by_election_1983_2019.xlsx"  # Update with your file path
+    data = load_data(file_path)
+
+    # Create a list of available years (sheet names)
+    available_years = list(data.keys())
+    selected_year = st.selectbox("Select a Year", available_years)
+
+    # Define the specified column names as filters
+    specified_filters = [
+        'Electors',
+        'Voters',
+        'Valid votes',
+    ]
+
+    # Allow the user to select filters
+    selected_filters = st.multiselect("Select Filters", specified_filters, default=specified_filters)
+
+    # Check if the selected year exists in the data dictionary
+    if selected_year in data:
+        selected_data = data[selected_year]
+
+        # Check if the selected filters exist in the DataFrame's columns
+        existing_columns = selected_data.columns
+        selected_filters = [filter for filter in selected_filters if filter in existing_columns]
+
+        if selected_filters:
+            # Display the data for selected year and selected filters
+            selected_data = selected_data[['Constituencies'] + selected_filters]
+            st.write(f"Data for {selected_year} (Selected Filters):")
+            st.write(selected_data)
+        else:
+            st.warning("No selected filters exist in the data for the selected year.")
+    else:
+        st.warning("Please select a year to view the data.")
+
+if __name__ == "__main__":
+    main()
 
 # Create a container for the footer
 footer_container = st.container()
