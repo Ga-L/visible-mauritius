@@ -1,0 +1,74 @@
+import pandas as pd
+import streamlit as st
+import os
+
+# Read the candidates_seats_occupation_by_natelec_1959_2014.csv dataset
+natelec_data_file = "datasets/candidates_seats_occupation_by_natelec_1959_2014.csv"
+
+# Read the CSV file
+natelec_data = pd.read_csv(natelec_data_file)
+
+# Remove commas from numerical columns
+natelec_data = natelec_data.apply(lambda x: x.str.replace(',', '', regex=True) if x.dtype == "object" else x)
+
+# Set favicon
+favicon_path = "fav_icon.png"
+
+st.set_page_config(
+    page_title="Visible Mauritius",
+    layout="wide",
+    page_icon=favicon_path  # Set the favicon
+)
+
+# Extract the unique years from the DataFrame
+unique_years = natelec_data["Year"].unique()
+
+# Title and CSS styling
+st.title("Visible Mauritius")
+st.subheader("Candidates Data")
+st.markdown("<h2 style='font-size: 25px;'>Candidates Seats Occupation</h2>", unsafe_allow_html=True)
+st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
+
+# Create a year picker for the primary year
+selected_year1 = st.selectbox("Select a Year", unique_years, key='year1')
+
+# Create a checkbox for comparative analysis
+enable_comparative_analysis = st.checkbox("Enable Comparative Analysis")
+
+if enable_comparative_analysis:
+    # Create a year picker for the secondary year
+    selected_year2 = st.selectbox("Select a Second Year", unique_years, key='year2')
+    
+    # Create a filter picker
+    selected_filter = st.selectbox("Select a Filter", natelec_data.columns[1:], key='filter')
+
+    # Filter data for the selected years
+    filtered_data1 = natelec_data[natelec_data["Year"] == selected_year1]
+    filtered_data2 = natelec_data[natelec_data["Year"] == selected_year2]
+
+    # Create a container for the comparative analysis
+    comparative_analysis_container = st.container()
+
+    with comparative_analysis_container:
+        st.subheader(f"Comparative Analysis for Years {selected_year1} and {selected_year2}")
+        st.write(f"Filter: {selected_filter}")
+        st.bar_chart({
+            f'{selected_year1}': filtered_data1[selected_filter].values,
+            f'{selected_year2}': filtered_data2[selected_filter].values
+        })
+else:
+    # Display the selected year's data in a table when comparative analysis is not checked
+    st.subheader(f"Data for Year {selected_year1}")
+    st.write(natelec_data[natelec_data["Year"] == selected_year1], format="dataframe")
+
+# Create a container for the footer
+footer_container = st.container()
+
+# Display footer text in the container
+with footer_container:
+    st.markdown(
+        "<p style='text-align:center; margin-top: 20px; font-size: 10px;'>"
+        "2023. Visible Mauritius. Developed with good intentions."
+        "</p>",
+        unsafe_allow_html=True
+    )

@@ -3,8 +3,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import plotly.express as px
 import os
-from streamlit import components 
-
+from streamlit import components
 
 # Specify the folder where the datasets are located
 #folder_path = "datasets"
@@ -36,6 +35,33 @@ from streamlit import components
 #print("Merged dataset created and saved as", merged_output_file)
 
 
+# Specify the folder where the datasets are located
+folder_path = "datasets"
+
+# List of dataset file names
+dataset_files = [
+    "by_constituency_2016_2022.csv",
+    "by_constituency_2015_2008.csv",
+    "by_constituency_2007_2000.csv",
+    "by_constituency_1999_1992.csv",
+    "by_constituency_1991_1982.csv"]
+
+# Initialize an empty DataFrame to hold the merged data
+merged_data = pd.DataFrame()
+
+# Loop through the list of dataset files and merge the data
+for file in dataset_files:
+    file_path = os.path.join(folder_path, file)
+    if os.path.exists(file_path):
+        # Read the dataset, skipping the first column
+        df = pd.read_csv(file_path, usecols=lambda col: col != 'Unnamed: 0')
+        # Merge the data into the combined DataFrame
+        merged_data = pd.concat([merged_data, df], axis=1)
+
+# Save the merged data to a new CSV file
+merged_output_file = "merged_datasets.csv"
+merged_data.to_csv(merged_output_file, index=False)
+
 # Set favicon
 favicon_path = "fav_icon.png"
 
@@ -45,105 +71,109 @@ st.set_page_config(
     page_icon=favicon_path  # Set the favicon
 )
 
-
-    # Read the dataset from the local folder into a DataFrame
+# Read the dataset from the local folder into a DataFrame
 file_path = "datasets/merged_datasets.csv"
 df = pd.read_csv(file_path)
 dataset_path = 'datasets/voters_electors_by_election.csv'
 df2 = pd.read_csv(dataset_path)
-    # Extract the unique years from the DataFrame
+
+# Extract the unique years from the DataFrame
 unique_years = df.columns[1:]
 
 # Title and CSS styling
 st.title("Visible Mauritius")
 st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
 
-# Select Year
-selected_year = st.selectbox("Select a Year", unique_years, key="year_picker", format_func=lambda x: x, help="")
+# Create a two-column layout
+col1, col2 = st.columns(2)
 
-# Apply custom CSS to the select box
-st.markdown(
-    """
-    <style>
-        /* Reduce font size of select box */
-        .Selectbox {
-            font-size: 12px;
-        }
+# Display the "Registered Voters in 2023" header and "Select a Year" picker in col1
+with col1:
+    st.markdown("<h2 style='font-size: 25px;'>Registered Voters 2023</h2>", unsafe_allow_html=True)
 
-        /* Adjust padding and margin to compact the select box */
-        .Selectbox {
-            padding: 4px 2px;
-            margin: 0;
-            width: 80px;  /* You can adjust the width as needed */
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+    # Select Year
+    selected_year = st.selectbox("Select a Year", unique_years, key="year_picker", format_func=lambda x: x, help="")
 
-# Check if a year has been selected before displaying the table
-if selected_year:
-    # Remove commas and convert to integers
-    df[unique_years] = df[unique_years].replace({',': ''}, regex=True)
-    df[unique_years] = df[unique_years].fillna('0').astype(int)
-    
-    # Calculate the sum of registered voters for the selected year
-    total_registered_voters = df[selected_year].sum()
-    
-    # Display the total sum of registered voters for the selected year
-    st.write(f"Total Registered Voters in {selected_year}: {total_registered_voters}")
-
-    col1, col2 = st.columns(2)
-    
-    # Display the filtered DataFrame in the first column
-    with col1:
-        st.header(f"Registered Voters in {selected_year}")
-        # Filter the DataFrame based on the selected year
-        filtered_df = df[["Constituency Name", selected_year]]
-        st.dataframe(filtered_df, height=400)
-        
-        # Display data source link with CSS styling
+    # Apply custom CSS to the select box
     st.markdown(
-        "<p style='text-align:center; margin-top: 10px; font-size: 12px;'>"
-        "Data Source: <a href='https://electoral.govmu.org/oec/?page_id=625' target='_blank'>Electoral Commission of Mauritius</a>"
-        "</p>",
-        unsafe_allow_html=True
+        """
+        <style>
+            /* Reduce font size of select box */
+            .Selectbox {
+                font-size: 12px;
+            }
+
+            /* Adjust padding and margin to compact the select box */
+            .Selectbox {
+                padding: 4px 2px;
+                margin: 0;
+                width: 80px;  /* You can adjust the width as needed */
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
     )
 
-    # Filters for Comparative Analysis in the second column
-    with col2:
-        st.sidebar.header("Difference in Registered Voters by constituency")
-        # Select only 2 Constituencies for Comparison
-        selected_constituencies = st.sidebar.multiselect("Select Constituencies (Max 2)", df["Constituency Name"], default=None, max_selections=2)
+    # Check if a year has been selected before displaying the table
+    if selected_year:
+        # Remove commas and convert to integers
+        df[unique_years] = df[unique_years].replace({',': ''}, regex=True)
+        df[unique_years] = df[unique_years].fillna('0').astype(int)
+
+        # Calculate the sum of registered voters for the selected year
+        total_registered_voters = df[selected_year].sum()
+
+        # Display the total sum of registered voters for the selected year
+        st.write(f"Total Registered Voters in {selected_year}: {total_registered_voters}")
+
+        # Display the filtered DataFrame in col1
+        filtered_df = df[["Constituency Name", selected_year]]
+        st.dataframe(filtered_df, height=400)
+
+        # Display data source link with CSS styling
+        st.markdown(
+            "<p style='text-align:center; margin-top: 10px; font-size: 12px;'>"
+            "Data Source: <a href='https://electoral.govmu.org/oec/?page_id=625' target='_blank'>Electoral Commission of Mauritius</a>"
+            "</p>",
+            unsafe_allow_html=True
+        )
+                 # Add a separator line
+        st.markdown("---")  # Inserts a horizontal rule
+
+# Display the "Difference in Registered Voters by constituency" subtitle in col2
+with col2:
+    st.markdown("<h2 style='font-size: 25px;'>Difference in Registered Voters</h2>", unsafe_allow_html=True)
+
+    # Select only 2 Constituencies for Comparison
+    selected_constituencies_comparison = st.multiselect("Select Constituencies (Max 2)", df["Constituency Name"], default=None, max_selections=2, key="comparison_multiselect")
+
+    if len(selected_constituencies_comparison) == 2:
+        constituency_a = selected_constituencies_comparison[0]
+        constituency_b = selected_constituencies_comparison[1]
+
+        voters_a = df[df["Constituency Name"] == constituency_a][selected_year].values[0]
+        voters_b = df[df["Constituency Name"] == constituency_b][selected_year].values[0]
+        difference = voters_a - voters_b  # Calculate the difference
+
+        # Create Bar Chart using Plotly
+        fig = px.bar(df, x=[constituency_a, constituency_b], y=[voters_a, voters_b], labels={'x': 'Constituencies', 'y': 'Registered Voters'},
+                     title=f'Registered Voters Comparison\nDifference: {difference}', color_discrete_sequence=['#FFFFFF', '#FFFFFF'])
+        fig.update_traces(texttemplate='%{y}', textposition='outside')  # Display values on bars
+        fig.update_layout(
+            plot_bgcolor='#0E1117',  # Transparent background
+            paper_bgcolor='#0E1117',  # Transparent background of the plot area
+            font_color='#FFFFFF',  # Font color
+            width=475,  # Width of the bar chart
+            height=500,  # Height of the bar chart
+            margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
+        )
+        st.plotly_chart(fig)
     
-         # Add a separator line
-        st.sidebar.markdown("---")  # Inserts a horizontal rule
+
     
-        # Display Plus/Minus Analysis and Bar Chart
-        if len(selected_constituencies) == 2:
-            constituency_a = selected_constituencies[0]
-            constituency_b = selected_constituencies[1]
-            
-            voters_a = df[df["Constituency Name"] == constituency_a][selected_year].values[0]
-            voters_b = df[df["Constituency Name"] == constituency_b][selected_year].values[0]
-            difference = voters_a - voters_b  # Calculate the difference
-            
-            # Create Bar Chart using Plotly
-            fig = px.bar(df, x=[constituency_a, constituency_b], y=[voters_a, voters_b], labels={'x': 'Constituencies', 'y': 'Registered Voters'},
-                         title=f'Registered Voters Comparison\nDifference: {difference}', color_discrete_sequence=['#FFFFFF', '#FFFFFF'])
-            fig.update_traces(texttemplate='%{y}', textposition='outside')  # Display values on bars
-            fig.update_layout(
-                plot_bgcolor='#0E1117',  # Transparent background
-                paper_bgcolor='#0E1117',  # Transparent background of the plot area
-                font_color='#FFFFFF',  # Font color
-                width=475,  # Width of the bar chart
-                height=525,  # Height of the bar chart
-                margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
-            )
-            st.plotly_chart(fig)
-            
 # Select a Constituency for Evolution Analysis
-selected_constituency_evolution = st.selectbox("Select a Constituency for Evolution Analysis", df["Constituency Name"], key="constituency_evolution_picker")
+st.markdown("<h2 style='font-size: 25px;'>Select a Constituency for Evolution Analysis</p>", unsafe_allow_html=True)
+selected_constituency_evolution = st.selectbox("", df["Constituency Name"], key="constituency_evolution_picker")
 
 # Add a checkbox for toggling the comparative feature
 toggle_comparative_checkbox = st.checkbox("Toggle Comparative Feature")
@@ -211,6 +241,10 @@ if selected_constituency_evolution:
             voters_new = df[df["Constituency Name"] == new_constituency][years].values[0]
 
             # Add the comparative line to the chart
+            fig_evolution.add_scatter(x=years, y=registered_voters, mode="lines",
+                          name=selected_constituency_evolution,  # Label for the blue line
+                          line=dict(color="#4CAF50"))  # Specify color for the blue line
+            
             fig_evolution.add_scatter(x=years, y=voters_new, mode="lines",
                                       name=new_constituency,  # Set the name for the legend
                                       line=dict(color="#2196F3"))  # Specify a different color for the comparative line
@@ -257,6 +291,8 @@ def load_data(file_path):
 
 # Main function
 def main():
+    
+    
     # Adding a subtitle using markdown
     st.markdown("### Electors, Voters, and Valid Votes Breakdown")
 
