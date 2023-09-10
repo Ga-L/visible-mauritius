@@ -80,9 +80,25 @@ df2 = pd.read_csv(dataset_path)
 # Extract the unique years from the DataFrame
 unique_years = df.columns[1:]
 
-# Title and CSS styling
-st.title("Visible Mauritius")
-st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
+# Read the SVG image as binary
+with open("logo.svg", "rb") as svg_file:
+    svg_binary = svg_file.read()
+
+# Convert the binary data to base64
+import base64
+svg_base64 = base64.b64encode(svg_binary).decode()
+
+# Display the logo using HTML
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/svg+xml;base64,{svg_base64}" width="300">
+        <h1>Visible Mauritius</h1>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown('<style>div.block-container{padding-top:1rem;}</style>', unsafe_allow_html=True)
 
 # Create a two-column layout
 col1, col2 = st.columns(2)
@@ -159,18 +175,22 @@ with col2:
         fig = px.bar(df, x=[constituency_a, constituency_b], y=[voters_a, voters_b], labels={'x': 'Constituencies', 'y': 'Registered Voters'},
                      title=f'Registered Voters Comparison\nDifference: {difference}', color_discrete_sequence=['#FFFFFF', '#FFFFFF'])
         fig.update_traces(texttemplate='%{y}', textposition='outside')  # Display values on bars
-        fig.update_layout(
-            plot_bgcolor='#0E1117',  # Transparent background
-            paper_bgcolor='#0E1117',  # Transparent background of the plot area
-            font_color='#FFFFFF',  # Font color
-            width=475,  # Width of the bar chart
-            height=500,  # Height of the bar chart
-            margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
-        )
-        st.plotly_chart(fig)
-    
+        # Update the bar color
+        fig.update_traces(marker_color='#FF4B4B')
 
-    
+# Make the background fully transparent
+        fig.update_layout(
+        plot_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background
+        paper_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background of the plot area
+        font_color='#FFFFFF',  # Font color
+        width=475,  # Width of the bar chart
+        height=500,  # Height of the bar chart
+        margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
+        
+        )
+
+        st.plotly_chart(fig)
+            
 # Select a Constituency for Evolution Analysis
 st.markdown("<h2 style='font-size: 25px;'>Select a Constituency for Evolution Analysis</p>", unsafe_allow_html=True)
 selected_constituency_evolution = st.selectbox("", df["Constituency Name"], key="constituency_evolution_picker")
@@ -197,18 +217,20 @@ if selected_constituency_evolution:
     
     # Create a line chart using Plotly Express
     fig_evolution = px.line(x=years, y=registered_voters, labels={'x': 'Year', 'y': 'Registered Voters'},
-                            title=f"Evolution of Registered Voters for {selected_constituency_evolution}",
-                            line_shape="linear",
-                            color_discrete_sequence=["#4CAF50"])  # Specify a color for the main line
+                        title=f"Evolution of Registered Voters for {selected_constituency_evolution}",
+                        line_shape="linear",
+                        color_discrete_sequence=["#4CAF50"])  # Specify a color for the main line
+
     fig_evolution.update_layout(
-        plot_bgcolor='#0E1117',  # Transparent background
-        paper_bgcolor='#0E1117',  # Transparent background of the plot area
+        plot_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background
+        paper_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background of the plot area
         font_color='#FFFFFF',  # Font color
         width=800,  # Width of the line chart
         height=400,  # Height of the line chart
         margin=dict(l=50, r=50, t=50, b=0),  # Margins
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
-    )
+        )
+
     
     # Set the legend label for the main line
     fig_evolution.data[0].name = selected_constituency_evolution
