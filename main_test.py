@@ -81,7 +81,7 @@ df2 = pd.read_csv(dataset_path)
 unique_years = df.columns[1:]
 
 # Read the SVG image as binary
-with open("logo.svg", "rb") as svg_file:
+with open("logo2.svg", "rb") as svg_file:
     svg_binary = svg_file.read()
 
 # Convert the binary data to base64
@@ -92,13 +92,13 @@ svg_base64 = base64.b64encode(svg_binary).decode()
 st.markdown(
     f"""
     <div style="display: flex; align-items: center;">
-        <img src="data:image/svg+xml;base64,{svg_base64}" width="300">
-        <h1>Visible Mauritius</h1>
+        <img src="data:image/svg+xml;base64,{svg_base64}" width="95">
+        <h1 style="margin-left: 10px;">Visible Mauritius</h1>
     </div>
     """,
     unsafe_allow_html=True,
 )
-st.markdown('<style>div.block-container{padding-top:1rem;}</style>', unsafe_allow_html=True)
+st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allow_html=True)
 
 # Create a two-column layout
 col1, col2 = st.columns(2)
@@ -217,7 +217,7 @@ if selected_constituency_evolution:
     
     # Create a line chart using Plotly Express
     fig_evolution = px.line(x=years, y=registered_voters, labels={'x': 'Year', 'y': 'Registered Voters'},
-                        title=f"Evolution of Registered Voters for {selected_constituency_evolution}",
+                        title=f"Registered Voters Evolution for <br> {selected_constituency_evolution}",
                         line_shape="linear",
                         color_discrete_sequence=["#4CAF50"])  # Specify a color for the main line
 
@@ -225,17 +225,18 @@ if selected_constituency_evolution:
         plot_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background
         paper_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background of the plot area
         font_color='#FFFFFF',  # Font color
-        width=800,  # Width of the line chart
-        height=400,  # Height of the line chart
-        margin=dict(l=50, r=50, t=50, b=0),  # Margins
+        margin=dict(l=0, r=0, t=30, b=0),  # Adjust margins for mobile
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
-        )
+    )
 
-    
+    # Set a maximum width for the plot to make it responsive on mobile
+    fig_evolution.update_layout(width=400)  # Adjust the width as needed for mobile
+
     # Set the legend label for the main line
     fig_evolution.data[0].name = selected_constituency_evolution
-    
+
     evolution_graph_placeholder.plotly_chart(fig_evolution)
+
     
      # Initialize variables for highest and lowest years
     highest_year_selected = years[registered_voters.argmax()]
@@ -257,7 +258,7 @@ if selected_constituency_evolution:
         # Create a dynamic title for comparative analysis
         if new_constituency:
             # Change the title based on the selected constituencies
-            comparative_title = f"Comparative {selected_constituency_evolution} & {new_constituency}"
+            comparative_title = f"Comparative{selected_constituency_evolution}<br>& {new_constituency}"
             fig_evolution.update_layout(title=comparative_title)  # Update the graph title
 
             voters_new = df[df["Constituency Name"] == new_constituency][years].values[0]
