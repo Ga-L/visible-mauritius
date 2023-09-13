@@ -81,7 +81,7 @@ df2 = pd.read_csv(dataset_path)
 unique_years = df.columns[1:]
 
 # Read the SVG image as binary
-with open("logo2.svg", "rb") as svg_file:
+with open("logo.svg", "rb") as svg_file:
     svg_binary = svg_file.read()
 
 # Convert the binary data to base64
@@ -92,8 +92,7 @@ svg_base64 = base64.b64encode(svg_binary).decode()
 st.markdown(
     f"""
     <div style="display: flex; align-items: center;">
-        <img src="data:image/svg+xml;base64,{svg_base64}" width="95">
-        <h1 style="margin-left: 10px;">Visible Mauritius</h1>
+        <img src="data:image/svg+xml;base64,{svg_base64}" width="85">
     </div>
     """,
     unsafe_allow_html=True,
@@ -384,9 +383,11 @@ footer_container = st.container()
 # Display footer text in the container
 with footer_container:
     st.markdown(
-        "<p style='text-align:center; margin-top: 20px; font-size: 10px;'>"
-        "2023. Visible Mauritius. Developed with good intentions."
-        "</p>",
+        "<div style='text-align: left; width: 80%; margin: 0 auto; font-size: 10px;'>"
+        "Disclaimer: While Visible Mauritius endeavors to ensure the information on this website is as current and precise as possible, Visible Mauritius makes no assertions or warranties regarding the accuracy and comprehensiveness of the data on this site and explicitly disclaims responsibility for any errors and omissions in the contents of this site.</div>"
+        "<div style='text-align: center; margin-top: 20px; font-size: 12px;'>"
+        "2023. Visible Mauritius. Developed with good intentions.</div>",
+        
         unsafe_allow_html=True
     )
     

@@ -80,9 +80,24 @@ df2 = pd.read_csv(dataset_path)
 # Extract the unique years from the DataFrame
 unique_years = df.columns[1:]
 
-# Title and CSS styling
-st.title("Visible Mauritius")
-st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
+# Read the SVG image as binary
+with open("logo.svg", "rb") as svg_file:
+    svg_binary = svg_file.read()
+
+# Convert the binary data to base64
+import base64
+svg_base64 = base64.b64encode(svg_binary).decode()
+
+# Display the logo using HTML
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/svg+xml;base64,{svg_base64}" width="85">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allow_html=True)
 
 # Create a two-column layout
 col1, col2 = st.columns(2)
@@ -159,18 +174,22 @@ with col2:
         fig = px.bar(df, x=[constituency_a, constituency_b], y=[voters_a, voters_b], labels={'x': 'Constituencies', 'y': 'Registered Voters'},
                      title=f'Registered Voters Comparison\nDifference: {difference}', color_discrete_sequence=['#FFFFFF', '#FFFFFF'])
         fig.update_traces(texttemplate='%{y}', textposition='outside')  # Display values on bars
-        fig.update_layout(
-            plot_bgcolor='#0E1117',  # Transparent background
-            paper_bgcolor='#0E1117',  # Transparent background of the plot area
-            font_color='#FFFFFF',  # Font color
-            width=475,  # Width of the bar chart
-            height=500,  # Height of the bar chart
-            margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
-        )
-        st.plotly_chart(fig)
-    
+        # Update the bar color
+        fig.update_traces(marker_color='#FF4B4B')
 
-    
+# Make the background fully transparent
+        fig.update_layout(
+        plot_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background
+        paper_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background of the plot area
+        font_color='#FFFFFF',  # Font color
+        width=475,  # Width of the bar chart
+        height=500,  # Height of the bar chart
+        margin=dict(l=0, r=0, t=50, b=0)  # Margins to align with the data table
+        
+        )
+
+        st.plotly_chart(fig)
+            
 # Select a Constituency for Evolution Analysis
 st.markdown("<h2 style='font-size: 25px;'>Select a Constituency for Evolution Analysis</p>", unsafe_allow_html=True)
 selected_constituency_evolution = st.selectbox("", df["Constituency Name"], key="constituency_evolution_picker")
@@ -197,23 +216,26 @@ if selected_constituency_evolution:
     
     # Create a line chart using Plotly Express
     fig_evolution = px.line(x=years, y=registered_voters, labels={'x': 'Year', 'y': 'Registered Voters'},
-                            title=f"Evolution of Registered Voters for {selected_constituency_evolution}",
-                            line_shape="linear",
-                            color_discrete_sequence=["#4CAF50"])  # Specify a color for the main line
+                        title=f"Registered Voters Evolution for <br> {selected_constituency_evolution}",
+                        line_shape="linear",
+                        color_discrete_sequence=["#4CAF50"])  # Specify a color for the main line
+
     fig_evolution.update_layout(
-        plot_bgcolor='#0E1117',  # Transparent background
-        paper_bgcolor='#0E1117',  # Transparent background of the plot area
+        plot_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background
+        paper_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background of the plot area
         font_color='#FFFFFF',  # Font color
-        width=800,  # Width of the line chart
-        height=400,  # Height of the line chart
-        margin=dict(l=50, r=50, t=50, b=0),  # Margins
+        margin=dict(l=0, r=0, t=30, b=0),  # Adjust margins for mobile
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
     )
-    
+
+    # Set a maximum width for the plot to make it responsive on mobile
+    fig_evolution.update_layout(width=400)  # Adjust the width as needed for mobile
+
     # Set the legend label for the main line
     fig_evolution.data[0].name = selected_constituency_evolution
-    
+
     evolution_graph_placeholder.plotly_chart(fig_evolution)
+
     
      # Initialize variables for highest and lowest years
     highest_year_selected = years[registered_voters.argmax()]
@@ -235,7 +257,7 @@ if selected_constituency_evolution:
         # Create a dynamic title for comparative analysis
         if new_constituency:
             # Change the title based on the selected constituencies
-            comparative_title = f"Comparative {selected_constituency_evolution} & {new_constituency}"
+            comparative_title = f"Comparative{selected_constituency_evolution}<br>& {new_constituency}"
             fig_evolution.update_layout(title=comparative_title)  # Update the graph title
 
             voters_new = df[df["Constituency Name"] == new_constituency][years].values[0]
@@ -291,6 +313,8 @@ def load_data(file_path):
 
 # Main function
 def main():
+    
+    
     # Adding a subtitle using markdown
     st.markdown("### Electors, Voters, and Valid Votes Breakdown")
 
@@ -359,9 +383,11 @@ footer_container = st.container()
 # Display footer text in the container
 with footer_container:
     st.markdown(
-        "<p style='text-align:center; margin-top: 20px; font-size: 10px;'>"
-        "2023. Visible Mauritius. Developed with good intentions."
-        "</p>",
+        "<div style='text-align: left; width: 80%; margin: 0 auto; font-size: 10px;'>"
+        "Disclaimer: While Visible Mauritius endeavors to ensure the information on this website is as current and precise as possible, Visible Mauritius makes no assertions or warranties regarding the accuracy and comprehensiveness of the data on this site and explicitly disclaims responsibility for any errors and omissions in the contents of this site.</div>"
+        "<div style='text-align: center; margin-top: 20px; font-size: 12px;'>"
+        "2023. Visible Mauritius. Developed with good intentions.</div>",
+        
         unsafe_allow_html=True
     )
     
