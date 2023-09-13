@@ -8,3 +8,9 @@ Updates 20.08.2023:
 1.New dataset of voters, electors and valid votes added.
 2.Filters added for more detailed analysis. 
 3.Barchart visualisation added to filtered data by user. 
+
+
+Major update 13.09.2023:
+1. Visible Mauritius got a new logo
+2. The platform is now multipage/multidashboard
+3. A new app --> Polling station Finder added to Visible Mauritius
