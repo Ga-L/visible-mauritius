@@ -3,7 +3,7 @@ import streamlit as st
 import base64
 
 # Load the dataset
-file_path = "datasets/polling_stations_2023.csv"  # Update with the correct file path
+file_path = "datasets/polling_stations_2023.csv" 
 df_polling_stations = pd.read_csv(file_path)
 
 # Set favicon
@@ -32,6 +32,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allow_html=True)
+
 
 # Create a dictionary mapping constituencies to their polling stations
 constituency_polling_stations = {
@@ -76,19 +77,20 @@ constituency_polling_stations = {
         "Jacques Le Chartier Government School",
         "Abercrombie Training Centre",
     ],
-    # Add other constituencies here
 }
 
-# Create a Streamlit selectbox for selecting constituencies
+# Create a header for find & locate your polling station
 st.markdown("<h2 style='font-size: 25px;'>Find & locate your Polling Station</h2>", unsafe_allow_html=True)
 
 # Create a two-column layout
 col1, col2 = st.columns(2)
 
+
 # Display the "Your Constituency" picker and table in col1
 with col1:
+    
     # Create a Streamlit selectbox for selecting constituencies
-    selected_constituency = st.selectbox("Your Constituency", list(constituency_polling_stations.keys()))
+    selected_constituency = st.selectbox("Your Constituency", list(constituency_polling_stations.keys()), help="Select your constituency and choose your polling station.")
 
     if selected_constituency:
         polling_stations = constituency_polling_stations[selected_constituency]
@@ -97,7 +99,7 @@ with col1:
 
 # Add a search bar next to the picker in col2
 with col2:
-    search_query = st.text_input("Enter Polling Station Name:", "")
+    search_query = st.text_input("Enter Polling Station Name:","", help="Copy & Paste your polling station name to generate Google Map, get directions and more.")
     
     # Check if search_query is not empty
     if search_query:
