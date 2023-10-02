@@ -4,7 +4,7 @@ import base64
 
 # Load the dataset
 file_path = "datasets/polling_stations_2023.csv" 
-df_polling_stations = pd.read_csv(file_path)
+df_polling_stations = df_polling_stations = pd.read_csv(file_path, encoding='ISO-8859-1')
 
 # Set favicon
 favicon_path = "fav_icon.png"
@@ -77,6 +77,88 @@ constituency_polling_stations = {
         "Jacques Le Chartier Government School",
         "Abercrombie Training Centre",
     ],
+    "Port Louis North And Montagne Longue": [
+    "Nicolay Government School",
+    "La Briquetterie Government School",
+    "Père Laval Roman Catholic Aided School",
+    "Elsie Prèle Government School (Ex. Ste. Croix Government School)",
+    "Port Louis North State Secondary School",
+    "Vallee Des Prêtres Government School",
+    "Arya Ravived Pracharini Sabha",
+    "Crève Coeur Government School",
+    "Mohabeer Foogooa Government School",
+    "Pandit Jagdish Sharma Radhay Government School",
+    "Notre Dame Government School",
+    "Hurryparsad Ramnarain Government School",
+    "Morcellement Raffray Government School"
+    ],
+  # "Pamplemousses and Triolet": [
+#     "Arsenal Government School",
+#     "St. Malo Community Centre",
+#     "Louis Serge Coutet Government School",
+#     "Baie Du Tombeau Community Centre",
+#     "Droopnath Ramphul State College",
+#     "Brizmohunsingh Khemloliva Government School",
+#     "Ilot Government School",
+#     "D'Epinay Government School",
+#     "Pandit Dowlut Sharma Ayrga Government School",
+#     "Pamplemousses Government School",
+#     "Pamplemousses State Secondary School",
+#     "Pointe Aux Piments Government School",
+#     "Professor Hassan Raffa State Secondary School",
+#     "Terre Rouge State Secondary School",
+#     "Daneswock Sewraz Government School",
+#     "Maheshwarnath Government School",
+#     "Triolet State Secondary School",
+#     "Sir Harilall Vaghjee Government School",
+#     "Noe Nemorin Government School"
+# ],
+
+# "Grand Baie And Poudre d'Or": [
+#     "Sir Seewoosagur Ramgoolam Government School",
+#     "Fond du Sac Government School",
+#     "Doorgachurn Hurry Government School",
+#     "S. K. Kanhye Government School",
+#     "Sharma Jugdambi State Secondary School",
+#     "R. Moosun Government School",
+#     "Saint Antoine Roman Catholic Aided School",
+#     "Adolphe de Plevitz State Secondary School",
+#     "Grand Baie Government School",
+#     "Jean Eon Roman Catholic Aided School",
+#     "Petit Raffray Government School",
+#     "Petit Raffray Social Welfare Centre",
+#     "Goodlands State Secondary School Boys",
+#     "Poudre d'Or Village Government School",
+#     "Marie Reine Roman Catholic Aided School",
+#     "Roche Terre Government School",
+#     "The Vale Government School"
+# ],
+
+    #"Piton And Rivière du Rempart": [
+    #"Bheewa Mahadoo Government School",
+    #"Sir Anerood Jugnauth Government School",
+    #"Roches Noires Government School",
+    #"Pardoomun Shibchurn Government School",
+    #"Amaury Government School",
+    #"Rampersad Goburdhun Government School",
+    #"Barlow Government School",
+    #"L’Amitie Government School",
+    #"Poudre D'Or Hamlet Government School",
+    #"Espérance Trébuchet Government School",
+    #"Cottage Government School",
+    #"Mohunpersad Kisnah Government School",
+    #"Petite Julie Government School",
+    #"Plaine St Cloud Roman Catholic Aided School",
+    #"Mapou Government School",
+    #"Plaine Des Papayes Government School",
+    #"Professor Ram Prakash Government School"
+
+
+
+    
+
+
+    
 }
 
 # Create a header for find & locate your polling station
@@ -91,11 +173,15 @@ with col1:
     
     # Create a Streamlit selectbox for selecting constituencies
     selected_constituency = st.selectbox("Your Constituency", list(constituency_polling_stations.keys()), help="Select your constituency and choose your polling station.")
+    
+    # Use Markdown to render a scrollable list within a fixed-height div
 
+    
     if selected_constituency:
         polling_stations = constituency_polling_stations[selected_constituency]
         st.write("Polling Stations:")
-        st.table(pd.DataFrame(polling_stations, columns=["Polling Stations"]))
+    # Style the DataFrame
+        st.dataframe(pd.DataFrame(polling_stations, columns=["Polling Stations"]).style.set_properties(**{'border-radius': '10px', 'overflow': 'auto'}), width=500)
 
 # Add a search bar next to the picker in col2
 with col2:
@@ -144,6 +230,22 @@ with col2:
             "Jacques Le Chartier Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14981.540776540836!2d57.48930915541994!3d-20.159681199999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c516c92ffaf51%3A0xabc63b0fe8deb107!2sSir%20Edgar%20Laurent%20Govt%20School!5e0!3m2!1sen!2smu!4v1694522633844!5m2!1sen!2smu",
             "Abercrombie Training Centre": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.476618582402!2d57.51668397411104!3d-20.155871345379598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c51117228c4eb%3A0xb894b82143584373!2sAbercrombie%20Training%20Centre%2C%20MITD!5e0!3m2!1sen!2smu!4v1694523900499!5m2!1sen!2smu",
             
+            #constituency 4
+    
+            "Nicolay Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.7231946296415!2d57.51425837411061!3d-20.145592545056076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c510d03589c8d%3A0x2a2b4fe45ca6225b!2sNicolay%20Government%20School!5e0!3m2!1sen!2smu!4v1696238514180!5m2!1sen!2smu",
+            "La Briquetterie Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.7692577435714!2d57.52009032411056!3d-20.14367179499555!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c516cdb0e2461%3A0xd74bcc74012b9fda!2sLA%20BRIQUETERIE%20GOVERNMENT%20SCHOOL%2C%20Bois%20Savon%20St%2C%20Port%20Louis!5e0!3m2!1sen!2smu!4v1696238709553!5m2!1sen!2smu",
+            "Père Laval Roman Catholic Aided School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.6832673433996!2d57.524101888855!3d-20.14725729999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c51153d195179%3A0xd16cad4e0e2418e1!2sPere%20Laval%20R.C.A%20School!5e0!3m2!1sen!2smu!4v1696238809205!5m2!1sen!2smu",
+            "Elsie Prèle Government School (Ex. Ste. Croix Government School)": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.6085647640907!2d57.523997574110766!3d-20.15037164520647!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c5109358dbeab%3A0xfcbd0162797c045!2sElsie%20Prele%20Gov%20school!5e0!3m2!1sen!2smu!4v1696238901806!5m2!1sen!2smu",
+            "Port Louis North State Secondary School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.4998664738337!2d57.52956897411104!3d-20.15490244534909!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c513d0b67c929%3A0xa5252b1d2c1c9468!2sPort%20Louis%20North%20State%20Secondary%20School!5e0!3m2!1sen!2smu!4v1696239009801!5m2!1sen!2smu",
+            "Vallee Des Prêtres Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.180951387164!2d57.532498074111466!3d-20.16818994576775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c513413baaff1%3A0x6c52a283949bba94!2sVallee%20Des%20Pretres%20Govt%20School!5e0!3m2!1sen!2smu!4v1696239072462!5m2!1sen!2smu",
+            #"Arya Ravived Pracharini Sabha": "No embed map available for this",
+            "Crève Coeur Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3744.8457482337217!2d57.56184857411201!3d-20.182147046207596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c572f7ff4137d%3A0x750db56350a0bf6c!2sCreve-Coeur%20Government%20Primary%20School!5e0!3m2!1sen!2smu!4v1696239703414!5m2!1sen!2smu",
+            "Mohabeer Foogooa Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.6042396395496!2d57.569111174110795!3d-20.150551945212122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c57c2b5e36d47%3A0x5972b4b674417041!2sMohabeer%20Foogooa%20Government%20School!5e0!3m2!1sen!2smu!4v1696239812207!5m2!1sen!2smu",
+            "Pandit Jagdish Sharma Radhay Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d239683.4100349582!2d57.39807944017183!3d-20.173506909568374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c56801c64e9a7%3A0xe28b830357e92230!2sPandit%20Jugdish%20Sharma%20Radhay%20Government%20School!5e0!3m2!1sen!2smu!4v1696240064844!5m2!1sen!2smu",
+            "Notre Dame Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119813.41323173438!2d57.43628752259402!3d-20.21029036506711!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c56b1dbe95555%3A0xabd4bb76c8790b4d!2sNotre%20Dame%20Government%20School!5e0!3m2!1sen!2smu!4v1696240193279!5m2!1sen!2smu",
+            "Hurryparsad Ramnarain Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119874.3404866174!2d57.38298654556272!3d-20.130996034198635!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c5166c2c3c2ed%3A0xba30016cdd4987e9!2sHurrypersad%20Ramnarain%20Government%20School!5e0!3m2!1sen!2smu!4v1696240318116!5m2!1sen!2smu",
+            "Morcellement Raffray Government School": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.8963408461263!2d57.5289260741104!3d-20.138371744828774!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c514288c50ff3%3A0xa2a8b26886214178!2sMorcellement%20Raffray%20Primary%20School!5e0!3m2!1sen!2smu!4v1696240383906!5m2!1sen!2smu",
+
             
             # Add more polling stations and URLs here
         }
