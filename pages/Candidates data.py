@@ -105,3 +105,17 @@ else:
         col1.warning("Please choose appropriate filters for the selected Constituency")
 
 
+# Create a container for the footer
+footer_container = st.container()
+
+# Display footer text in the container
+with footer_container:
+    st.markdown(
+        "<div style='text-align: left; width: 80%; margin: 0 auto; font-size: 10px;'>"
+        "Disclaimer: While Visible Mauritius endeavors to ensure the information on this website is as current and precise as possible, Visible Mauritius makes no assertions or warranties regarding the accuracy and comprehensiveness of the data on this site and explicitly disclaims responsibility for any errors and omissions in the contents of this site.</div>"
+        "<div style='text-align: center; margin-top: 20px; font-size: 12px;'>"
+        "2023. Visible Mauritius. Developed with good intentions.</div>",
+        
+        unsafe_allow_html=True
+    )
+
