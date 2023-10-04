@@ -173,10 +173,7 @@ with col1:
     
     # Create a Streamlit selectbox for selecting constituencies
     selected_constituency = st.selectbox("Your Constituency", list(constituency_polling_stations.keys()), help="Select your constituency and choose your polling station.")
-    
-    # Use Markdown to render a scrollable list within a fixed-height div
-
-    
+        
     if selected_constituency:
         polling_stations = constituency_polling_stations[selected_constituency]
         st.write("Polling Stations:")
