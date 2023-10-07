@@ -43,7 +43,7 @@ file_path = "datasets/detailed_results_for_all_constituencies_2019.csv"
 df = pd.read_csv(file_path, encoding='ISO-8859-1')
 
 # Create a two-column layout
-col1, col2 = st.columns(2)
+col1, col2, = st.columns(2)
 
 with col1:
     st.markdown("<h2 style='font-size: 20px;'>Results for 2019 General Elections</h2>", unsafe_allow_html=True)
@@ -52,6 +52,7 @@ with col1:
 selected_constituency = col1.selectbox("Select a Constituency", df['Constituencies'].unique())
 
 # Add checkboxes for filtering
+
 enable_party_filter = col1.checkbox("Enable filter by Political party")
 enable_community_filter = col1.checkbox("Enable filter by community")
 
@@ -80,6 +81,8 @@ with col2:
         search_term = ""
     else:
         search_term = st.text_input("Search by Name, Community, or Party")
+        
+    
 
 # Search functionality
 if search_term:

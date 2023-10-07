@@ -145,7 +145,7 @@ with col1:
         filtered_df = df[["Constituency Name", selected_year]]
         st.dataframe(filtered_df, height=400)
 
-        # Display data source link with CSS styling
+        # Display data  source link with CSS styling
         st.markdown(
             "<p style='text-align:center; margin-top: 10px; font-size: 12px;'>"
             "Data Source: <a href='https://electoral.govmu.org/oec/?page_id=625' target='_blank'>Electoral Commission of Mauritius</a>"
@@ -206,6 +206,12 @@ highlights_placeholder = st.empty()
 # Create a placeholder for the evolution of registered voters graph
 evolution_graph_placeholder = st.empty()
 
+# Create a placeholder for the comparative chart
+comparative_chart_placeholder = st.empty()
+
+# Create a placeholder for the table
+table_placeholder = st.empty()
+
 # Display the evolution of registered voters for the selected constituency
 if selected_constituency_evolution:
     # Filter the DataFrame based on the selected constituency
@@ -215,41 +221,50 @@ if selected_constituency_evolution:
     registered_voters = constituency_data.iloc[0, 1:].values
     
     # Create a line chart using Plotly Express
-    fig_evolution = px.line(x=years, y=registered_voters, labels={'x': 'Year', 'y': 'Registered Voters'},
-                        title=f"Registered Voters Evolution for <br> {selected_constituency_evolution}",
-                        line_shape="linear",
-                        color_discrete_sequence=["#4CAF50"])  # Specify a color for the main line
+    fig_evolution = px.line(
+        x=years,
+        y=registered_voters,
+        labels={'x': 'Year', 'y': 'Registered Voters'},
+        title=f"Registered Voters Evolution for <br> {selected_constituency_evolution}",
+        line_shape="linear",
+        color_discrete_sequence=["#4CAF50"]
+    )
 
+    # Configure the chart layout for responsiveness
     fig_evolution.update_layout(
         plot_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background
         paper_bgcolor='rgba(0, 0, 0, 0)',  # Fully transparent background of the plot area
         font_color='#FFFFFF',  # Font color
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),  # Legend position
         margin=dict(l=0, r=0, t=30, b=0),  # Adjust margins for mobile
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)  # Legend position
+        autosize=True,  # Automatically adjust the size of the chart
+        width=None,  # Width will be determined by the parent container
+        height=None  # Height will be determined by the parent container
     )
 
     # Set a maximum width for the plot to make it responsive on mobile
-    fig_evolution.update_layout(width=400)  # Adjust the width as needed for mobile
+    fig_evolution.update_xaxes(showgrid=False)  # Hide x-axis grid lines
+    fig_evolution.update_yaxes(showgrid=False)  # Hide y-axis grid lines
 
     # Set the legend label for the main line
     fig_evolution.data[0].name = selected_constituency_evolution
 
-    evolution_graph_placeholder.plotly_chart(fig_evolution)
+    # Display the Plotly chart by default
+    chart_placeholder = st.empty()
+    chart_placeholder.plotly_chart(fig_evolution, use_container_width=True)  # Use container width for responsiveness
 
-    
-     # Initialize variables for highest and lowest years
+    # Initialize variables for highest and lowest years
     highest_year_selected = years[registered_voters.argmax()]
     lowest_year_selected = years[registered_voters.argmin()]
-    
-      # Initialize avg_registered_voters outside the conditional block
+
+    # Initialize avg_registered_voters outside the conditional block
     avg_registered_voters = registered_voters.mean()
 
     # Check if the comparative feature checkbox is checked
     if toggle_comparative_checkbox:
-        # Hide the highlights placeholder
+        # Hide the highlights and chart placeholders
         highlights_placeholder.empty()
-        # Create a placeholder for the table
-        table_placeholder = st.empty()
+        chart_placeholder.empty()
 
         # Display a new constituency picker for comparative analysis
         new_constituency = new_constituency_picker_placeholder.selectbox("Select a Constituency for Comparative Analysis", df["Constituency Name"], key="new_constituency_picker")
@@ -257,33 +272,34 @@ if selected_constituency_evolution:
         # Create a dynamic title for comparative analysis
         if new_constituency:
             # Change the title based on the selected constituencies
-            comparative_title = f"Comparative{selected_constituency_evolution}<br>& {new_constituency}"
+            comparative_title = f"Comparative {selected_constituency_evolution}<br>& {new_constituency}"
             fig_evolution.update_layout(title=comparative_title)  # Update the graph title
 
             voters_new = df[df["Constituency Name"] == new_constituency][years].values[0]
 
-            # Add the comparative line to the chart
-            fig_evolution.add_scatter(x=years, y=registered_voters, mode="lines",
-                          name=selected_constituency_evolution,  # Label for the blue line
-                          line=dict(color="#4CAF50"))  # Specify color for the blue line
-            
-            fig_evolution.add_scatter(x=years, y=voters_new, mode="lines",
-                                      name=new_constituency,  # Set the name for the legend
-                                      line=dict(color="#2196F3"))  # Specify a different color for the comparative line
-            evolution_graph_placeholder.plotly_chart(fig_evolution)
+            # Create the comparative line for the new_constituency
+            if new_constituency:
+                # Add the comparative line to the chart
+                fig_evolution.add_scatter(x=years, y=voters_new, mode="lines",
+                                          name=new_constituency,  # Set the name for the legend
+                                          line=dict(color="#2196F3"))  # Specify a different color for the comparative line
+
+            # Display the comparative chart
+            comparative_chart_placeholder.plotly_chart(fig_evolution, use_container_width=True)  # Use container width for responsiveness
 
             # Calculate the average value for the selected constituency
             avg_registered_voters_new = voters_new.mean()
 
-        # Display a table for the data of the selected constituencies
+            # Display a table for the data of the selected constituencies
             data_table = pd.DataFrame({
-            selected_constituency_evolution: [highest_year_selected, lowest_year_selected, round(avg_registered_voters)],
-            new_constituency: [years[voters_new.argmax()], years[voters_new.argmin()], round(avg_registered_voters_new)]
-        }, index=['Highest Year', 'Lowest Year', 'Average Value'])
+                selected_constituency_evolution: [highest_year_selected, lowest_year_selected, round(avg_registered_voters)],
+                new_constituency: [years[voters_new.argmax()], years[voters_new.argmin()], round(avg_registered_voters_new)]
+            }, index=['Highest Year', 'Lowest Year', 'Average Value'])
 
             # Display the table in the same column as the graph
             with table_placeholder:
                 st.table(data_table)
+
     else:
         # Calculate the highlights (highest year, lowest year, and average value)
         highest_year = years[registered_voters.argmax()]
