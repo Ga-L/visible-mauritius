@@ -172,10 +172,10 @@ with col2:
 
         # Create Bar Chart using Plotly
         fig = px.bar(df, x=[constituency_a, constituency_b], y=[voters_a, voters_b], labels={'x': 'Constituencies', 'y': 'Registered Voters'},
-                     title=f'Registered Voters Comparison\nDifference: {difference}', color_discrete_sequence=['#FFFFFF', '#FFFFFF'])
-        fig.update_traces(texttemplate='%{y}', textposition='outside')  # Display values on bars
-        # Update the bar color
-        fig.update_traces(marker_color='#FF4B4B')
+                    title=f'Registered Voters Comparison\nDifference: {difference}', color_discrete_sequence=["#0EB9CB", "#FFC23D"])
+
+        # Update the bar colors for each constituency
+        fig.update_traces(marker_color=['#0EB9CB', '#FFC23D'], texttemplate='%{y}', textposition='outside')  # Display values on bars
 
 # Make the background fully transparent
         fig.update_layout(
@@ -227,7 +227,7 @@ if selected_constituency_evolution:
         labels={'x': 'Year', 'y': 'Registered Voters'},
         title=f"Registered Voters Evolution for <br> {selected_constituency_evolution}",
         line_shape="linear",
-        color_discrete_sequence=["#4CAF50"]
+        color_discrete_sequence=["#0EB9CB"]
     )
 
     # Configure the chart layout for responsiveness
@@ -282,7 +282,7 @@ if selected_constituency_evolution:
                 # Add the comparative line to the chart
                 fig_evolution.add_scatter(x=years, y=voters_new, mode="lines",
                                           name=new_constituency,  # Set the name for the legend
-                                          line=dict(color="#2196F3"))  # Specify a different color for the comparative line
+                                          line=dict(color="#FFC23D"))  # Specify a different color for the comparative line
 
             # Display the comparative chart
             comparative_chart_placeholder.plotly_chart(fig_evolution, use_container_width=True)  # Use container width for responsiveness
@@ -371,12 +371,13 @@ def main():
                 # Apply filters to the data
                 selected_data = selected_data[selected_data['Constituencies'].isin(selected_constituencies)]
 
-                # Create a single bar chart for all selected filters
-                if not selected_data.empty:
-                    fig = px.bar(selected_data, x='Constituencies', y=selected_filters,
-                                 title=f'Selected Filters by Constituency')
-                    st.plotly_chart(fig)
-                # No need to display a message if there's no data to show
+            # Create a single bar chart for all selected filters
+            if not selected_data.empty:
+                fig = px.bar(selected_data, x='Constituencies', y=selected_filters,
+                            title=f'Selected Filters by Constituency', color_discrete_sequence=["#FF7751", "#FFC23D", "#0EB9CB"])
+                st.plotly_chart(fig)
+            # No need to display a message if there's no data to show
+
             else:
                 # No selected filters exist in the data for the selected year.
                 st.warning("No selected filters exist in the data for the selected year.")
