@@ -1,0 +1,12 @@
+/* style.css */
+
+/* Import Montserrat Bold (700) font from Google Fonts */
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700&display=swap');
+
+/* Define custom styles using the Montserrat Bold (700) font */
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; /* Font weight 700 corresponds to Montserrat Bold */
+}
+
+/* Add additional custom styles as needed */

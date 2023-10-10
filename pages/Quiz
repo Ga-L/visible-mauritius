@@ -1,0 +1,110 @@
+import pandas as pd
+import streamlit as st
+import matplotlib.pyplot as plt
+import plotly.express as px
+import os
+import time
+from streamlit import components
+
+# Set favicon
+favicon_path = "fav_icon.png"
+st.set_page_config(
+    page_title="Visible Mauritius",
+    layout="wide",
+    page_icon=favicon_path  # Set the favicon
+)
+
+# Read the SVG image as binary
+with open("logo.svg", "rb") as svg_file:
+    svg_binary = svg_file.read()
+
+# Convert the binary data to base64
+import base64
+svg_base64 = base64.b64encode(svg_binary).decode()
+
+# Display the logo using HTML
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/svg+xml;base64,{svg_base64}" width="85">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allow_html=True)
+
+# Reference the custom CSS file
+st.markdown(
+    """
+    <style>
+    @import url('style.css'); /* Replace 'style.css' with the actual path to your CSS file */
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Define quiz questions and answers
+quiz_data = [
+    {
+        "question": "What is the capital of Mauritius?",
+        "options": ["Port Louis", "Curepipe", "Flacq", "Quatre Bornes"],
+        "correct_answer": "Port Louis",
+    },
+    # Add more questions here
+]
+
+# Initialize variables
+score = 0
+question_number = 0
+time_limit = 60  # Set the time limit for the quiz in seconds
+start_time = 0
+
+#Header title 
+
+st.title("Visible Mauritius Quiz")
+
+# Create a two-column layout within the main container
+col1, col2,= st.columns(2)
+
+# Timer
+
+with col1:
+        if "start" not in st.session_state:
+            st.session_state.start = False
+
+        if st.session_state.start:
+            elapsed_time = time.time() - start_time
+            remaining_time = max(time_limit - elapsed_time, 0)
+            st.write(f"Time Remaining: {int(remaining_time)} seconds")
+
+        # Start button
+
+        if not st.session_state.start:
+            if st.button("Start Quiz"):
+                st.session_state.start = True
+                start_time = time.time()
+
+        # Quiz logic
+        if st.session_state.start:
+            question = quiz_data[question_number]
+            st.write(f"Question {question_number + 1}: {question['question']}")
+            selected_option = st.radio("Select an option", question["options"])
+
+            if st.button("Submit Answer"):
+                if selected_option == question["correct_answer"]:
+                    score += 1
+                question_number += 1
+
+            if question_number == len(quiz_data) or remaining_time <= 0:
+                st.write("Quiz Over!")
+                st.write(f"Your Score: {score} out of {len(quiz_data)}")
+
+            # Reset button
+            if st.button("Restart Quiz"):
+                st.session_state.start = False
+                question_number = 0
+                score = 0
+
+# Display results at the end
+    
+    

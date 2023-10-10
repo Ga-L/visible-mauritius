@@ -50,12 +50,23 @@ df = pd.read_csv(file_path, encoding='ISO-8859-1')
 # Create a main container to hold the content of both columns
 main_container = st.container()
 
+# Reference the custom CSS file
+st.markdown(
+    """
+    <style>
+    @import url('style.css'); /* Replace 'style.css' with the actual path to your CSS file */
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Create a two-column layout within the main container
 col1, col2 = main_container.columns(2)
 
 # Add a constituency selection dropdown in col1
 with col1:
-    st.markdown("<h2 style='font-size: 25px;'>Results for 2019 General Elections</h2>", unsafe_allow_html=True)
+    # Apply the custom font in your content
+    st.markdown("<h2 style='font-family: Montserrat, sans-serif; font-weight: 700; font-size: 20px;'>Results for 2019 General Elections</h2>", unsafe_allow_html=True)
     selected_constituency = st.selectbox("Select a Constituency", df['Constituencies'].unique())
 
     # Filter the dataset based on the selected constituency

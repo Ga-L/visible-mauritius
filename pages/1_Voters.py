@@ -102,9 +102,19 @@ st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allo
 # Create a two-column layout
 col1, col2 = st.columns(2)
 
+# Reference the custom CSS file
+st.markdown(
+    """
+    <style>
+    @import url('style.css'); /* Replace 'style.css' with the actual path to your CSS file */
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Display the "Registered Voters in 2023" header and "Select a Year" picker in col1
 with col1:
-    st.markdown("<h2 style='font-size: 25px;'>Registered Voters 2023</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-family: Montserrat, sans-serif; font-weight: 700; font-size: 20px;'>Registered Voters</h2>", unsafe_allow_html=True)
 
     # Select Year
     selected_year = st.selectbox("Select a Year", unique_years, key="year_picker", format_func=lambda x: x, help="")
@@ -157,7 +167,7 @@ with col1:
 
 # Display the "Difference in Registered Voters by constituency" subtitle in col2
 with col2:
-    st.markdown("<h2 style='font-size: 25px;'>Difference in Registered Voters</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-family: Montserrat, sans-serif; font-weight: 700; font-size: 20px;'>Difference in Registered Voters</h2>", unsafe_allow_html=True)
 
     # Select only 2 Constituencies for Comparison
     selected_constituencies_comparison = st.multiselect("Select Constituencies (Max 2)", df["Constituency Name"], default=None, max_selections=2, key="comparison_multiselect")
@@ -191,7 +201,7 @@ with col2:
         st.plotly_chart(fig)
             
 # Select a Constituency for Evolution Analysis
-st.markdown("<h2 style='font-size: 25px;'>Select a Constituency for Evolution Analysis</p>", unsafe_allow_html=True)
+st.markdown("<h2 style='font-family: Montserrat, sans-serif; font-weight: 700; font-size: 20px;'>Select a Constituency for Evolution Analysis</h2>", unsafe_allow_html=True)
 selected_constituency_evolution = st.selectbox("", df["Constituency Name"], key="constituency_evolution_picker")
 
 # Add a checkbox for toggling the comparative feature
@@ -332,7 +342,7 @@ def main():
     
     
     # Adding a subtitle using markdown
-    st.markdown("### Electors, Voters, and Valid Votes Breakdown")
+    st.markdown("<h2 style='font-family: Montserrat, sans-serif; font-weight: 700; font-size: 20px;'>Electors, Voters, and Valid Votes Breakdown</h2>", unsafe_allow_html=True)
 
     # Load data from the Excel file
     file_path = "datasets/voters_electors_by_election_1983_2019.xlsx"  # Update with your file path

@@ -15,9 +15,14 @@ Major update 13.09.2023:
 2. The platform is now multipage/multidashboard
 3. A new app --> Polling station Finder added to Visible Mauritius
 
+
 Major update 04.10.2023
 1. New dashboard added with election results & candidates dataset
 2. Search bar Beta version added
 3. Filters by community and by political party added
 
+
+Minor updates 09.10.2023
+1. Added a style.css for front-end styling --> Montserrat Bold fonts
+2. Change color of bar charts and data visualisation
 

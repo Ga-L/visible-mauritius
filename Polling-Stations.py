@@ -33,6 +33,15 @@ st.markdown(
 )
 st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allow_html=True)
 
+# Reference the custom CSS file
+st.markdown(
+    """
+    <style>
+    @import url('style.css'); /* Replace 'style.css' with the actual path to your CSS file */
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Create a dictionary mapping constituencies to their polling stations
 constituency_polling_stations = {
@@ -162,7 +171,7 @@ constituency_polling_stations = {
 }
 
 # Create a header for find & locate your polling station
-st.markdown("<h2 style='font-size: 25px;'>Find & locate your Polling Station</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='font-family: Montserrat, sans-serif; font-weight: 700; font-size: 20px;'>Find & locate your Polling Station</h2>", unsafe_allow_html=True)
 
 # Create a two-column layout
 col1, col2 = st.columns(2)
