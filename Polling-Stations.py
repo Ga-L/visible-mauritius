@@ -15,6 +15,8 @@ st.set_page_config(
     page_icon=favicon_path  # Set the favicon
 )
 
+st.sidebar ("Select your data")
+
 # Read the SVG image as binary
 with open("logo.svg", "rb") as svg_file:
     svg_binary = svg_file.read()
