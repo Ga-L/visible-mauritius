@@ -13,8 +13,16 @@ st.set_page_config(
     page_title="Visible Mauritius",
     layout="wide",
     page_icon=favicon_path  # Set the favicon
+    
 )
 
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
 
 # Read the SVG image as binary
 with open("logo.svg", "rb") as svg_file:
