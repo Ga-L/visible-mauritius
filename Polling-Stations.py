@@ -25,8 +25,6 @@ hide_st_style = """
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-st.sidebar.success("Select a page")
-
 # Read the SVG image as binary
 with open("logo.svg", "rb") as svg_file:
     svg_binary = svg_file.read()
